@@ -186,11 +186,11 @@ class InferenceModule:
         """
 
         "*** YOUR CODE HERE ***"
-        if ghostPosition == jailPosition and noisyDistance != None:
+        if ghostPosition == jailPosition and noisyDistance == None:
             return 1
         if ghostPosition != jailPosition and noisyDistance == None:
             return 0
-        if ghostPosition == jailPosition and noisyDistance == None:
+        if ghostPosition == jailPosition and noisyDistance != None:
             return 0
 
         # if (ghostPosition == jailPosition): 
@@ -313,12 +313,10 @@ class ExactInference(InferenceModule):
 
         pacPos = gameState.getPacmanPosition()
         jailPos = self.getJailPosition()
-
+        
         for ghost in self.allPositions:
             possibleProb = self.getObservationProb(observation, pacPos, ghost, jailPos)
             self.beliefs[ghost] *= possibleProb
-                
-            
 
         self.beliefs.normalize()
         # raiseNotDefined()
@@ -343,37 +341,21 @@ class ExactInference(InferenceModule):
 
         """
         "*** YOUR CODE HERE ***"
-        
-        # lexe = DiscreteDistribution()
-        # print(lexe)
-        # newPosDist = self.getPositionDistribution(gameState, oldPos)
-        # lexe.add
-
-
-
-        # self.beliefs.normalize()
-
-        # # raiseNotDefined()
    
-    # Create a new distribution for the updated beliefs.
+        # Create a new distribution for the updated beliefs.
         updatedBeliefs = DiscreteDistribution()
 
-    # For each old position that the ghost might be in...
+
         for oldPos in self.allPositions:
             # Get the distribution over new positions given the old position.
             newPosDist = self.getPositionDistribution(gameState, oldPos)
 
-        # For each possible new position...
             for newPos, prob in newPosDist.items():
-                # Update the belief for newPos. Note the Bayes' rule application here:
-                # We increase our belief for newPos based on the probability of moving to newPos from oldPos
-                # multiplied by our belief that the ghost was in oldPos.
+                # Adjust belief for newPos based on the probability of moving to newPos from oldPos
+                # multiplied by our belief that the ghost was in oldPos
                 updatedBeliefs[newPos] += prob * self.beliefs[oldPos]
 
-        # Now, normalize the updated beliefs.
         updatedBeliefs.normalize()
-
-        # Finally, update our beliefs to the updated beliefs.
         self.beliefs = updatedBeliefs
 
 
